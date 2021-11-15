@@ -158,6 +158,25 @@ describe('Basic user flow for Website', () => {
     // Reload the page once more, then go through each <product-item> to make sure that it has remembered nothing
     // is in the cart - do this by checking the text on the buttons so that they should say "Add to Cart".
     // Also check to make sure that #cart-count is still 0
+
+    //reloading page once more:
+    await page.reload();
+
+    //going through each <product-item> to make sure that it has remembered nothing is in the cart
+    //same as above...
+    const prodItems = await page.$$('product-item');
+      for (let i = 0; i < 20; i++) {
+        const shadowRoot = await prodItems[i].getProperty('shadowRoot');
+        const button = await shadowRoot.$('button');
+        const innerText = await button.getProperty('innerText');
+        //do this by checking the text on the buttons so that they should say "Add to Cart"
+        expect(innerText['_remoteObject'].value).toBe('Add to Cart');
+      }
+
+      //like before checking that cart-count is still 0:
+      const cartCount = await page.$('#cart-count')
+      const innerText = await cartCount.getProperty('innerText')
+      expect(innerText['_remoteObject'].value).toBe("0");
   }, 10000);
 
   // Checking to make sure that localStorage for the cart is as we'd expect for the
@@ -165,6 +184,14 @@ describe('Basic user flow for Website', () => {
   it('Checking the localStorage to make sure cart is correct', async () => {
     console.log('Checking the localStorage...');
     // TODO - Step 8
-    // At this point he item 'cart' in localStorage should be '[]', check to make sure it is
+    // At this point the item 'cart' in localStorage should be '[]', check to make sure it is
+
+    //same procedure as above...
+    const itemCart = await page.evaluate(() => {
+      return localStorage.getItem('cart');
+   });
+   //making sure it is '[]'
+   expect(item).toBe('[]')
+
   });
 });
